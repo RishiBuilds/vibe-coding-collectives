@@ -1,7 +1,8 @@
 import { generateText } from "ai"
 import { createGroq } from "@ai-sdk/groq"
 import { z } from "zod"
-import type { Article } from "@/lib/constitution"
+import type { Article, Ruling } from "@/lib/constitution"
+import { formatPrecedentContext } from "@/lib/precedent"
 
 export const maxDuration = 30
 
@@ -15,14 +16,17 @@ const rulingSchema = z.object({
   citationQuote: z.string(),
   body: z.string(),
   closing: z.string(),
+  severity: z.enum(["LOW", "MEDIUM", "HIGH"]),
+  precedentNote: z.string(),
 })
 
 export async function POST(req: Request) {
   try {
-    const { situation, articles, surname } = (await req.json()) as {
+    const { situation, articles, surname, precedents } = (await req.json()) as {
       situation: string
       articles: Article[]
       surname?: string
+      precedents?: Ruling[]
     }
 
     if (!situation || typeof situation !== "string") {
@@ -36,20 +40,29 @@ export async function POST(req: Request) {
       .map((a) => `Article ${a.number} (${a.category}): "${a.rule}"`)
       .join("\n")
 
+    const precedentContext = precedents
+      ? formatPrecedentContext(precedents)
+      : ""
+
     const system = `You are the AI enforcer of the Papa Constitution${
-      surname ? ` of ${surname}` : ""
+      surname ? ` of the ${surname} family` : ""
     }. Papa is a wise, philosophical man who believes deeply in savings, patience, and long-term thinking. He speaks in calm, measured English — never shouts, never jokes cheaply, but occasionally lands a dry, thoughtful observation that makes you think. Here are his Constitutional articles:
 
 ${articleList}
+${precedentContext}
 
-When given a family situation or dispute, you must: (1) deliver a clear verdict — APPROVED, DENIED, or CONDITIONAL, (2) cite at least one specific article by number and quote it exactly as written above, (3) give a 2–3 sentence ruling in Papa's philosophical tone, (4) end with one short, wise closing thought. Sound like a calm patriarch who has seen enough of life to know what matters. Never be preachy. Never be harsh. Always be fair.
+When given a family situation or dispute, you must: (1) deliver a clear verdict — APPROVED, DENIED, or CONDITIONAL, (2) cite at least one specific article by number and quote it exactly as written above, (3) give a 2–3 sentence ruling in Papa's philosophical tone, (4) end with one short, wise closing thought, (5) assess the severity of this matter as LOW, MEDIUM, or HIGH, (6) if there are precedents above, note whether this ruling is consistent with them or if you are overruling — if no precedents, write "First ruling on this type of matter."
+
+Sound like a calm patriarch who has seen enough of life to know what matters. Never be preachy. Never be harsh. Always be fair.
 
 You MUST respond with ONLY a valid JSON object (no markdown, no code fences, no extra text) with these exact keys:
 - "verdict": one of "APPROVED", "DENIED", or "CONDITIONAL"
 - "citationArticle": the article number (integer)
 - "citationQuote": the exact quoted text of the cited article
 - "body": a 2-3 sentence ruling in Papa's tone
-- "closing": one short, wise closing thought`
+- "closing": one short, wise closing thought
+- "severity": one of "LOW", "MEDIUM", or "HIGH"
+- "precedentNote": a brief note on precedent consistency`
 
     const { text } = await generateText({
       model: groq("llama-3.3-70b-versatile"),
@@ -78,5 +91,3 @@ You MUST respond with ONLY a valid JSON object (no markdown, no code fences, no 
     )
   }
 }
-
-

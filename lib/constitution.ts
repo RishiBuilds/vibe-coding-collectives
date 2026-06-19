@@ -6,6 +6,7 @@ export type Article = {
 }
 
 export type Verdict = "APPROVED" | "DENIED" | "CONDITIONAL"
+export type Severity = "LOW" | "MEDIUM" | "HIGH"
 
 export type Ruling = {
   id: string
@@ -15,7 +16,34 @@ export type Ruling = {
   body: string
   closing: string
   date: string // ISO string
+  severity?: Severity
+  precedentNote?: string // Note about consistency with past rulings
+  citedArticleNumber?: number
 }
+
+export type ConstitutionalInsights = {
+  totalRulings: number
+  approvalRate: number
+  denialRate: number
+  conditionalRate: number
+  mostCitedArticle: { number: number; rule: string; count: number } | null
+  verdictStreak: { verdict: Verdict; count: number }
+  categoryBreakdown: Record<string, number>
+  articleCitations: Record<number, number>
+}
+
+export const CATEGORIES = [
+  "Money & Spending",
+  "Wisdom & Patience",
+  "Character",
+  "Respect & Family",
+  "Planning & Foresight",
+  "Family & Home",
+  "Education",
+  "Health & Wellness",
+  "Technology",
+  "Work & Career",
+] as const
 
 export const DEFAULT_ARTICLES: Article[] = [
   {
@@ -75,10 +103,12 @@ export const STORAGE_KEYS = {
 } as const
 
 export const EXAMPLE_PROMPTS = [
-  "Can I buy a new phone?",
-  "Should we go on an expensive holiday?",
-  "Is it okay to skip saving this month?",
-  "Who is right in this argument?",
+  "Can I buy a new iPhone on EMI?",
+  "Should we go on an expensive holiday abroad?",
+  "Is it okay to skip saving this month for a sale?",
+  "My sibling borrowed money and won't return it",
+  "Should I quit my stable job for a startup?",
+  "Can I take a loan for a luxury car?",
 ]
 
 export function formatDate(iso: string): string {
@@ -87,6 +117,17 @@ export function formatDate(iso: string): string {
       day: "numeric",
       month: "long",
       year: "numeric",
+    })
+  } catch {
+    return iso
+  }
+}
+
+export function formatDateShort(iso: string): string {
+  try {
+    return new Date(iso).toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
     })
   } catch {
     return iso

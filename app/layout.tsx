@@ -1,41 +1,37 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Inter, Playfair_Display } from 'next/font/google'
 import './globals.css'
 
-const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const inter = Inter({
+  variable: '--font-inter',
   subsets: ['latin'],
+  display: 'swap',
+})
+
+const playfair = Playfair_Display({
+  variable: '--font-playfair',
+  subsets: ['latin'],
+  display: 'swap',
 })
 
 export const metadata: Metadata = {
-  title: 'Papa Says So — The Papa Constitution',
+  title: 'Papa Says So — The Family Constitution',
   description:
-    'Every family is secretly governed by Papa&apos;s unwritten rules. Now they are official. Submit a dispute and let the Constitutional Authority rule.',
-  generator: 'v0.app',
+    'Every family runs on Papa\'s unwritten rules. This app turns them into a real, numbered Constitution with a precedent-tracking ruling system powered by AI.',
   icons: {
     icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
       {
         url: '/icon.svg',
         type: 'image/svg+xml',
       },
     ],
-    apple: '/apple-icon.png',
   },
 }
 
 export const viewport: Viewport = {
-  colorScheme: 'light',
-  themeColor: '#FFFDF5',
+  colorScheme: 'dark',
+  themeColor: '#0a0f1e',
 }
 
 export default function RootLayout({
@@ -46,9 +42,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} bg-background`}
+      className={`${inter.variable} ${playfair.variable}`}
     >
       <body className="font-sans antialiased">
+        {/* Ambient glow decorations */}
+        <div className="ambient-glow ambient-glow-1" aria-hidden="true" />
+        <div className="ambient-glow ambient-glow-2" aria-hidden="true" />
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
