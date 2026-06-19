@@ -1,16 +1,16 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
-import { Inter, Playfair_Display } from 'next/font/google'
+import { Fraunces, Space_Grotesk } from 'next/font/google'
 import './globals.css'
 
-const inter = Inter({
-  variable: '--font-inter',
+const spaceGrotesk = Space_Grotesk({
+  variable: '--font-space-grotesk',
   subsets: ['latin'],
   display: 'swap',
 })
 
-const playfair = Playfair_Display({
-  variable: '--font-playfair',
+const fraunces = Fraunces({
+  variable: '--font-fraunces',
   subsets: ['latin'],
   display: 'swap',
 })
@@ -30,8 +30,8 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  colorScheme: 'dark',
-  themeColor: '#0a0f1e',
+  colorScheme: 'light',
+  themeColor: '#f7f1e6',
 }
 
 export default function RootLayout({
@@ -42,12 +42,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${playfair.variable}`}
+      className={`${spaceGrotesk.variable} ${fraunces.variable}`}
     >
       <body className="font-sans antialiased">
-        {/* Ambient glow decorations */}
-        <div className="ambient-glow ambient-glow-1" aria-hidden="true" />
-        <div className="ambient-glow ambient-glow-2" aria-hidden="true" />
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

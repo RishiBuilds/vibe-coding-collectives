@@ -39,7 +39,7 @@ export function VerdictBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center justify-center rounded-full font-sans font-bold uppercase tracking-[0.15em]",
+        "inline-flex items-center justify-center rounded-full border-3 border-black font-sans font-bold uppercase tracking-[0.15em] shadow-[4px_4px_0_#0a0a0a]",
         bg,
         text,
         animated && glow,
@@ -60,24 +60,24 @@ export function SeverityBadge({
   severity: "LOW" | "MEDIUM" | "HIGH"
 }) {
   const styles = {
-    LOW: "bg-sky-500/10 text-sky-400 border-sky-500/20",
-    MEDIUM: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-    HIGH: "bg-red-500/10 text-red-400 border-red-500/20",
+    LOW: "bg-blue-600 text-white border-blue-800",
+    MEDIUM: "bg-amber-600 text-white border-amber-800",
+    HIGH: "bg-red-700 text-white border-red-900",
   }
 
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-wider",
+        "inline-flex items-center gap-1.5 rounded-full border-3 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider shadow-[3px_3px_0_#0a0a0a]",
         styles[severity],
       )}
     >
       <span
         className={cn(
-          "size-1.5 rounded-full",
-          severity === "LOW" && "bg-sky-400",
-          severity === "MEDIUM" && "bg-amber-400",
-          severity === "HIGH" && "bg-red-400 animate-pulse",
+          "size-2 rounded-full",
+          severity === "LOW" && "bg-blue-200",
+          severity === "MEDIUM" && "bg-amber-200",
+          severity === "HIGH" && "bg-red-200 animate-pulse",
         )}
       />
       {severity} severity
